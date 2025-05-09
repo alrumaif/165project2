@@ -70,20 +70,18 @@ class ZipZipTree:
 		self.tree[key] = x
 		self.size += 1
 		prev = key
-		while key is not None:
-			fix = prev
-			if cur is not None and self.tree[cur].key < key:
-				while cur is not None and self.tree[cur].key <key:
+		if cur is not None:
+			prev_node = self.tree[prev]
+			if self.tree[cur].key < key:
+				while cur is not None and self.tree[cur].key < key:
 					prev = cur
 					cur = self.tree[cur].right
+				self.tree[prev].right = cur
 			else:
 				while cur is not None and self.tree[cur].key > key:
 					prev = cur
 					cur = self.tree[cur].left
-			if self.tree[fix].key > key or (fix == key and self.tree[prev].key > key):
-				self.tree[fix].left = cur
-			else:
-				self.tree[fix].right = cur
+				self.tree[prev].left = cur
 
 
 	def remove(self, key: KeyType):
