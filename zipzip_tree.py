@@ -31,13 +31,17 @@ class ZipZipTree:
 		self.root = None
 
 	def get_random_rank(self) -> Rank:
+		import math
 		import random
 		geometric_rank = 0
-		while random.getrandbits(1):  # Geometric distribution with p=0.5
+		while random.getrandbits(1):
 			geometric_rank += 1
-		uniform_rank = 0 if self.capacity <= 1 else random.randint(0, self.capacity - 1)
+		if self.capacity <= 1:
+			uniform_rank = 0
+		else:
+			max_uniform = int(math.log(self.capacity) ** 3)
+			uniform_rank = random.randint(0, max(0, max_uniform - 1))
 		return Rank(geometric_rank, uniform_rank)
-
 	
 	def insert(self, key: KeyType, val: ValType, rank: Rank = None):
 		if rank is None:
