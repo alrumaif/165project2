@@ -81,8 +81,7 @@ class ZipZipTree:
     
 	def remove(self, key: KeyType):
 		if key not in self.tree:
-			return 
-		x = self.tree[key]
+			return
 		cur = self.root
 		prev = None
 		while cur != key:
@@ -95,35 +94,33 @@ class ZipZipTree:
 		left = node.left
 		right = node.right
 		if left is None:
-			cur = right
+			replacement = right
 		elif right is None:
-			cur = left
-		elif self.tree[left].rank.geometric_rank >= self.tree[right].rank.geometric_rank:
-			cur = left
+			replacement = left
+		elif self.tree[left].rank.geometric_rank <= self.tree[right].rank.geometric_rank:
+			replacement = left
 		else:
-			cur = right
-			
-		if self.root == key:
-			self.root = cur
+			replacement = right
+		if cur == self.root:
+			self.root = replacement
 		elif key < self.tree[prev].key:
-			self.tree[prev].left = cur
+			self.tree[prev].left = replacement
 		else:
-			self.tree[prev].right = cur
-			
+			self.tree[prev].right = replacement
 		while left is not None and right is not None:
-			if self.tree[left].rank.geometric_rank >= self.tree[right].rank.geometric_rank:
-				while left is not None and self.tree[left].rank.geometric_rank >= self.tree[right].rank.geometric_rank:
+			if self.tree[left].rank.geometric_rank <= self.tree[right].rank.geometric_rank:
+				while left is not None and self.tree[left].rank.geometric_rank <= self.tree[right].rank.geometric_rank:
 					prev = left
-					left = self.tree[left].left
+					left = self.tree[left].right
 				self.tree[prev].right = right
 			else:
-				while right is not None and self.tree[right].rank.geometric_rank > self.tree[left].rank.geometric_rank:
+				while right is not None and self.tree[right].rank.geometric_rank < self.tree[left].rank.geometric_rank:
 					prev = right
-					right = self.tree[right].right
+					right = self.tree[right].left
 				self.tree[prev].left = left
-				
 		del self.tree[key]
 		self.size -= 1
+
 	
 
 	def find(self, key: KeyType) -> ValType:
