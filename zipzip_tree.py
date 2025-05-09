@@ -32,58 +32,53 @@ class ZipZipTree:
 
 	def get_random_rank(self) -> Rank:
 		import random
-		geometric_rank = random.randint(0, self.capacity - 1)
+		geometric_rank = 0
+		while random.getrandbits(1):
+			geometric_rank += 1
 		uniform_rank = random.randint(0, self.capacity - 1)
-		return Rank(geometric_rank, uniform_rank)	
+		return Rank(geometric_rank, uniform_rank)
 	
 	def insert(self, key: KeyType, val: ValType, rank: Rank = None):
 		if rank is None:
 			rank = self.get_random_rank()
-		x = Node(key, val, rank)
+			
+		new_node = Node(key, val, rank)
+		self.tree[key] = new_node
+		
 		cur = self.root
-		prev = None
+		parent = None
+		
 		while cur is not None:
 			cur_node = self.tree[cur]
-			if (rank.geometric_rank < cur_node.rank.geometric_rank or (rank.geometric_rank == cur_node.rank.geometric_rank and rank.uniform_rank < cur_node.rank.uniform_rank)):
-				break
-			prev = cur
-			if key < cur_node.key:
-				cur = cur_node.left
+			if (cur_node.rank.geometric_rank > rank.geometric_rank or
+                (cur_node.rank.geometric_rank == rank.geometric_rank and
+                cur_node.rank.uniform_rank > rank.uniform_rank)):
+				parent = cur
+				if key < cur_node.key:
+					cur = cur_node.left
+				else:
+					cur = cur_node.right
 			else:
-				cur = cur_node.right
-		if prev is None:
+				break
+			
+		if cur is not None:
+			if key < self.tree[cur].key:
+				new_node.right = cur
+			else:
+				new_node.left = cur
+				
+		if parent is None:
 			self.root = key
 		else:
-			parent = self.tree[prev]
-			if key < parent.key:
-				parent.left = key
+			parent_node = self.tree[parent]
+			if key < parent_node.key:
+				parent_node.left = key
 			else:
-				parent.right = key
+				parent_node.right = key
 				
-		if cur is None:
-			x.left = x.right = None
-		else:
-			if key < self.tree[cur].key:
-				x.right = cur
-			else:
-				x.left = cur
-		self.tree[key] = x
 		self.size += 1
-		prev = key
-		if cur is not None:
-			prev_node = self.tree[prev]
-			if self.tree[cur].key < key:
-				while cur is not None and self.tree[cur].key < key:
-					prev = cur
-					cur = self.tree[cur].right
-				self.tree[prev].right = cur
-			else:
-				while cur is not None and self.tree[cur].key > key:
-					prev = cur
-					cur = self.tree[cur].left
-				self.tree[prev].left = cur
-
-
+	
+    
 	def remove(self, key: KeyType):
 		if key not in self.tree:
 			return 
@@ -168,6 +163,9 @@ class ZipZipTree:
 				cur = node.right
 			depth += 1
 		raise KeyError(f"Key {key} not found")
+    
+    
+
 
 	# feel free to define new methods in addition to the above
 	# fill in the definitions of each required member function (above),
