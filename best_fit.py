@@ -1,5 +1,4 @@
 # Example file: best_fit.py
-
 # explanations for member functions are provided in requirements.py
 from decimal import Decimal
 def best_fit(items: list[float], assignment: list[int], free_space: list[float]):
@@ -29,33 +28,27 @@ def best_fit(items: list[float], assignment: list[int], free_space: list[float])
 
 
 def best_fit_decreasing(items: list[float], assignment: list[int], free_space: list[float]):
-    # Clear assignment and free_space in case reused
-    for i in range(len(items)):
-        assignment[i] = -1
     free_space.clear()
+    bins = []
 
-    indexed_items = sorted(enumerate(items), key=lambda x: -x[1])
-    bins = []  # list of Decimal capacities
+    sorted_items = sorted(items, reverse=True)
 
-    for original_index, item in indexed_items:
-        item_dec = Decimal(str(item))
+    for i, item in enumerate(sorted_items):
         best_bin = -1
-        min_leftover = Decimal('Infinity')
+        min_leftover = float('inf')
 
         for j, space in enumerate(bins):
-            if item_dec <= space:
-                leftover = space - item_dec
+            if item <= space + 1e-8:
+                leftover = space - item
                 if leftover < min_leftover:
                     min_leftover = leftover
                     best_bin = j
 
         if best_bin != -1:
-            assignment[original_index] = best_bin
-            bins[best_bin] -= item_dec
+            bins[best_bin] -= item
+            assignment[i] = best_bin
         else:
-            new_bin = Decimal('1.0') - item_dec
-            bins.append(new_bin)
-            assignment[original_index] = len(bins) - 1
+            bins.append(1.0 - item)
+            assignment[i] = len(bins) - 1
 
-    free_space[:] = [float(b.quantize(Decimal('0.01'))) for b in bins]
-
+    free_space[:] = [round(b, 2) for b in bins]
