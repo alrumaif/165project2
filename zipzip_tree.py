@@ -165,8 +165,18 @@ class ZipZipTree:
 				cur = node.right
 			depth += 1
 		raise KeyError(f"Key {key} not found")
-    
-    
+	def find_geq(self, target: float):
+		cur = self.root
+		candidate = None
+		while cur is not None:
+			node = self.tree[cur]
+			if node.key >= target:
+				candidate = cur
+				cur = node.left
+			else:
+				cur = node.right
+		return candidate  # key of smallest bin that fits
+
 
 
 	# feel free to define new methods in addition to the above
