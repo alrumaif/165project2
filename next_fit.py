@@ -18,6 +18,6 @@ def next_fit(items: list[float], assignment: list[int], free_space: list[float])
             assignment[i] = current_bin
             remaining_capacity = bin_capacity - item
 
-    temp_free_space.append(round(remaining_capacity, 2))  # Add last bin
+    temp_free_space.append(round(remaining_capacity, 2))
     free_space[:] = temp_free_space
 
