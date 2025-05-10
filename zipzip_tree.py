@@ -59,7 +59,7 @@ class ZipZipTree:
                 (cur_node.rank.geometric_rank == rank.geometric_rank and
                 cur_node.rank.uniform_rank > rank.uniform_rank)):
 				parent = cur
-				if key < cur_node.key:
+				if key < self.tree[cur].key:
 					cur = cur_node.left
 				else:
 					cur = cur_node.right
@@ -75,11 +75,11 @@ class ZipZipTree:
 		if parent is None:
 			self.root = key
 		else:
-			parent_node = self.tree[parent]
-			if key < parent_node.key:
-				parent_node.left = key
+			# parent_node = self.tree[parent]
+			if key < self.tree[parent].key:
+				self.tree[parent].left = key
 			else:
-				parent_node.right = key
+				self.tree[parent].right = key
 				
 		self.size += 1
 	
