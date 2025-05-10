@@ -3,37 +3,41 @@
 
 # explanations for member functions are provided in requirements.py
 
+from decimal import Decimal, getcontext
+from zipzip_tree import ZipZipTree
+
+from decimal import Decimal
+
 def first_fit(items: list[float], assignment: list[int], free_space: list[float]):
-    bins = []  # List of remaining capacities
+    for i in range(len(items)):
+        assignment[i] = -1
+    free_space.clear()
+
+    bins = []  # list of Decimal remaining capacities
 
     for i, item in enumerate(items):
-        # Step 1: Find first bin that fits the item
-        bin_found = False
-        for j, remaining in enumerate(bins):
-            if item <= remaining:
-                # Step 2a: Assign item to bin j
+        item_dec = Decimal(str(item))
+        placed = False
+
+        for j in range(len(bins)):
+            if item_dec <= bins[j]:
                 assignment[i] = j
-                bins[j] -= item
-                bin_found = True
+                bins[j] -= item_dec
+                placed = True
                 break
 
-        # Step 2b: If no bin fits, create a new one
-        if not bin_found:
-            bin_index = len(bins)
-            assignment[i] = bin_index
-            bins.append(1.0 - item)
+        if not placed:
+            assignment[i] = len(bins)
+            bins.append(Decimal('1.0') - item_dec)
 
-    # Step 3: Output final free space
-    free_space[:] = [round(cap, 2) for cap in bins]
+    free_space[:] = [float(b.quantize(Decimal('0.01'))) for b in bins]
+
 
 
 def first_fit_decreasing(items: list[float], assignment: list[int], free_space: list[float]):
-    # Step 1: Sort items in decreasing order, but remember original indices
     indexed_items = sorted(enumerate(items), key=lambda x: -x[1])
 
-    bins = []  # list of remaining capacities
-
-    # Step 2: First-Fit on sorted items
+    bins = [] 
     for original_index, item in indexed_items:
         placed = False
         for j, remaining in enumerate(bins):
@@ -48,5 +52,4 @@ def first_fit_decreasing(items: list[float], assignment: list[int], free_space: 
             assignment[original_index] = bin_index
             bins.append(1.0 - item)
 
-    # Step 3: Final free space output
     free_space[:] = [round(cap, 2) for cap in bins]

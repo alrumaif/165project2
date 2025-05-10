@@ -165,6 +165,19 @@ class ZipZipTree:
 				cur = node.right
 			depth += 1
 		raise KeyError(f"Key {key} not found")
+	def get_min_geq(self, key: KeyType) -> tuple[KeyType, ValType] | None:
+		cur = self.root
+		candidate = None
+		while cur is not None:
+			node = self.tree[cur]
+			if cur >= key:
+				candidate = cur
+				cur = node.left
+			else:
+				cur = node.right
+		if candidate is None:
+			return None
+		return candidate, self.tree[candidate].val
     
     
 
