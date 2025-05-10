@@ -1,3 +1,4 @@
+
 # explanations for member functions are provided in requirements.py
 # each file that uses a Zip Tree should import it from this file
 
@@ -42,43 +43,48 @@ class ZipZipTree:
 			max_uniform = int(math.log(self.capacity) ** 3)
 			uniform_rank = random.randint(0, max(0, max_uniform - 1))
 		return Rank(geometric_rank, uniform_rank)
-
-		
+	
 	def insert(self, key: KeyType, val: ValType, rank: Rank = None):
 		if rank is None:
 			rank = self.get_random_rank()
+			
 		new_node = Node(key, val, rank)
 		self.tree[key] = new_node
+		
 		cur = self.root
 		parent = None
+		
 		while cur is not None:
 			cur_node = self.tree[cur]
-			if (rank.geometric_rank < cur_node.rank.geometric_rank or
-                (rank.geometric_rank == cur_node.rank.geometric_rank and
-                rank.uniform_rank < cur_node.rank.uniform_rank) or
-                (rank.geometric_rank == cur_node.rank.geometric_rank and
-                rank.uniform_rank == cur_node.rank.uniform_rank and
-                key < cur_node.key)):
-				break  # new node bubbles up here
-			parent = cur
-			if key < cur_node.key:
-				cur = cur_node.left
+			if (cur_node.rank.geometric_rank > rank.geometric_rank or
+                (cur_node.rank.geometric_rank == rank.geometric_rank and
+                cur_node.rank.uniform_rank > rank.uniform_rank)):
+				parent = cur
+				if key < self.tree[cur].key:
+					cur = cur_node.left
+				else:
+					cur = cur_node.right
 			else:
-				cur = cur_node.right
+				break
+			
 		if cur is not None:
 			if key < self.tree[cur].key:
 				new_node.right = cur
 			else:
 				new_node.left = cur
+				
 		if parent is None:
 			self.root = key
 		else:
+			# parent_node = self.tree[parent]
 			if key < self.tree[parent].key:
 				self.tree[parent].left = key
 			else:
 				self.tree[parent].right = key
+				
 		self.size += 1
-
+	
+    
 	def remove(self, key: KeyType):
 		if key not in self.tree:
 			return
@@ -160,17 +166,8 @@ class ZipZipTree:
 				cur = node.right
 			depth += 1
 		raise KeyError(f"Key {key} not found")
-	def find_geq(self, target: float):
-		cur = self.root
-		candidate = None
-		while cur is not None:
-			node = self.tree[cur]
-			if node.key >= target:
-				candidate = cur
-				cur = node.left
-			else:
-				cur = node.right
-		return candidate  # key of smallest bin that fits
+    
+
 
 
 
