@@ -1,4 +1,3 @@
-
 # explanations for member functions are provided in requirements.py
 # each file that uses a Zip Tree should import it from this file
 
@@ -56,18 +55,16 @@ class ZipZipTree:
 		
 		while cur is not None:
 			cur_node = self.tree[cur]
-			if (
-                rank.geometric_rank < cur_node.rank.geometric_rank or
-                (rank.geometric_rank == cur_node.rank.geometric_rank and rank.uniform_rank < cur_node.rank.uniform_rank) or
-                (rank.geometric_rank == cur_node.rank.geometric_rank and rank.uniform_rank == cur_node.rank.uniform_rank and key < cur_node.key)
-            ):
-				break  
-			parent = cur
-			if key < cur_node.key:
-				cur = cur_node.left
+			if (cur_node.rank.geometric_rank > rank.geometric_rank or
+                (cur_node.rank.geometric_rank == rank.geometric_rank and
+                cur_node.rank.uniform_rank > rank.uniform_rank)):
+				parent = cur
+				if key < cur_node.key:
+					cur = cur_node.left
+				else:
+					cur = cur_node.right
 			else:
-				cur = cur_node.right
-
+				break
 			
 		if cur is not None:
 			if key < self.tree[cur].key:
@@ -78,11 +75,11 @@ class ZipZipTree:
 		if parent is None:
 			self.root = key
 		else:
-			# parent_node = self.tree[parent]
-			if key < self.tree[parent].key:
-				self.tree[parent].left = key
+			parent_node = self.tree[parent]
+			if key < parent_node.key:
+				parent_node.left = key
 			else:
-				self.tree[parent].right = key
+				parent_node.right = key
 				
 		self.size += 1
 	
@@ -169,10 +166,7 @@ class ZipZipTree:
 			depth += 1
 		raise KeyError(f"Key {key} not found")
     
-
-
-
-
+    
 
 
 	# feel free to define new methods in addition to the above
