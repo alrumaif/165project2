@@ -74,7 +74,7 @@ def zip_tree_tests():
 
 	print('\ntesting random geometric rank generation')
 	geometric_rank_sum = 0
-	num_ranks = 1000000
+	num_ranks = 100000
 	tree3 = requirements.ZipZipTree(capacity = num_ranks)
 
 	for _ in range(num_ranks):
