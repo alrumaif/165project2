@@ -1,23 +1,21 @@
-# Example file: next_fit.py
-
-# explanations for member functions are provided in requirements.py
+from decimal import Decimal, getcontext
 
 def next_fit(items: list[float], assignment: list[int], free_space: list[float]):
-    bin_capacity = 1.0
+    getcontext().prec = 28  # high enough to avoid float accumulation errors
+
+    bin_capacity = Decimal('1.0')
     current_bin = 0
     remaining_capacity = bin_capacity
-    temp_free_space = []
 
     for i, item in enumerate(items):
-        if item <= remaining_capacity:
+        item_decimal = Decimal(str(item))
+        if item_decimal <= remaining_capacity:
             assignment[i] = current_bin
-            remaining_capacity -= item
+            remaining_capacity -= item_decimal
         else:
-            temp_free_space.append(round(remaining_capacity, 2))
+            free_space.append(float(remaining_capacity))
             current_bin += 1
             assignment[i] = current_bin
-            remaining_capacity = bin_capacity - item
+            remaining_capacity = bin_capacity - item_decimal
 
-    temp_free_space.append(round(remaining_capacity, 2))
-    free_space[:] = temp_free_space
-
+    free_space.append(float(remaining_capacity))
