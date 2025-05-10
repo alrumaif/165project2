@@ -55,7 +55,9 @@ class ZipZipTree:
 		
 		while cur is not None:
 			cur_node = self.tree[cur]
-			if self.rank_less(cur_node.rank, rank, cur_node.key, key):
+			if (cur_node.rank.geometric_rank > rank.geometric_rank or
+                (cur_node.rank.geometric_rank == rank.geometric_rank and
+                cur_node.rank.uniform_rank > rank.uniform_rank)):
 				parent = cur
 				if key < self.tree[cur].key:
 					cur = cur_node.left
@@ -100,7 +102,7 @@ class ZipZipTree:
 			replacement = right
 		elif right is None:
 			replacement = left
-		if self.rank_less(self.tree[left].rank, self.tree[right].rank, left, right):
+		elif self.tree[left].rank.geometric_rank <= self.tree[right].rank.geometric_rank:
 			replacement = left
 		else:
 			replacement = right
@@ -163,13 +165,8 @@ class ZipZipTree:
 				cur = node.right
 			depth += 1
 		raise KeyError(f"Key {key} not found")
-	
-	def rank_less(self, r1: Rank, r2: Rank, k1: KeyType, k2: KeyType) -> bool:
-		if r1.geometric_rank != r2.geometric_rank:
-			return r1.geometric_rank < r2.geometric_rank
-		if r1.uniform_rank != r2.uniform_rank:
-			return r1.uniform_rank < r2.uniform_rank
-		return k1 < k2  # tie-break using key
+    
+
 
 
 
