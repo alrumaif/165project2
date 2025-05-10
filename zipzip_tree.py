@@ -56,16 +56,18 @@ class ZipZipTree:
 		
 		while cur is not None:
 			cur_node = self.tree[cur]
-			if (cur_node.rank.geometric_rank > rank.geometric_rank or
-                (cur_node.rank.geometric_rank == rank.geometric_rank and
-                cur_node.rank.uniform_rank > rank.uniform_rank)):
-				parent = cur
-				if key < self.tree[cur].key:
-					cur = cur_node.left
-				else:
-					cur = cur_node.right
+			if (
+                rank.geometric_rank < cur_node.rank.geometric_rank or
+                (rank.geometric_rank == cur_node.rank.geometric_rank and rank.uniform_rank < cur_node.rank.uniform_rank) or
+                (rank.geometric_rank == cur_node.rank.geometric_rank and rank.uniform_rank == cur_node.rank.uniform_rank and key < cur_node.key)
+            ):
+				break  
+			parent = cur
+			if key < cur_node.key:
+				cur = cur_node.left
 			else:
-				break
+				cur = cur_node.right
+
 			
 		if cur is not None:
 			if key < self.tree[cur].key:
